@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Billing System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            width: 350px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        input {
+            width: 90%;
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            width: 95%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        #output {
+            margin-top: 15px;
+            text-align: left;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Python Billing System</h2>
+
+    <input type="text" id="product" placeholder="Product Name">
+    <input type="number" id="price" placeholder="Price">
+    <input type="number" id="quantity" placeholder="Quantity">
+
+    <button onclick="generateBill()">Generate Bill</button>
+
+    <div id="output"></div>
+</div>
+
+<script>
+async function generateBill() {
+
+    const product = document.getElementById("product").value;
+    const price = parseFloat(document.getElementById("price").value);
+    const quantity = parseInt(document.getElementById("quantity").value);
+
+    const response = await fetch("/calculate", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ product, price, quantity })
+    });
+
+    const data = await response.json();
+
+    document.getElementById("output").innerHTML = `
+        <h3>Invoice</h3>
+        Product: ${data.product} <br>
+        Subtotal: ₹${data.subtotal.toFixed(2)} <br>
+        GST (18%): ₹${data.gst.toFixed(2)} <br>
+        <strong>Total: ₹${data.total.toFixed(2)}</strong>
+    `;
+}
+</script>
+
+</body>
+</html>
